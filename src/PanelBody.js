@@ -75,13 +75,19 @@ function PanelBody() {
         setDeletedCharacters(value => [...value, avatar]);
     }
 
-    function refresh() {
+    async function refresh() {
+        const context = SillyTavern.getContext();
         setProgress(0);
         setDeletedCharacters([]);
-        const characters = SillyTavern.getContext().characters.slice();
+        const characters = context.characters;
+        for (let index = 0; index < characters.length; index++) {
+            if (typeof context.unshallowCharacter === 'function' && characters[index].shallow) {
+                await context.unshallowCharacter(index);
+            }
+        }
         const args = {
             threshold: sliderValue,
-            characters: characters,
+            characters: characters.slice(),
             method: method,
             fields: fields,
         };
@@ -107,6 +113,11 @@ function PanelBody() {
         } else {
             toastr.error('Character not found');
         }
+    }
+
+    function onDeleteCharacterClick(character) {
+        onSelectCharacterClick(character);
+        document.getElementById('delete_button').click();
     }
 
     function onFieldChange(field) {
@@ -244,6 +255,14 @@ function PanelBody() {
                                                     <div className="menu_button menu_button_icon" onClick={() => onSelectCharacterClick(character)}>
                                                         <i class="fa-solid fa-eye"></i>
                                                         <span>View</span>
+                                                    </div>
+                                                )
+                                            }
+                                            {
+                                                !deletedCharacters.includes(character.avatar) && (
+                                                    <div className="menu_button menu_button_icon" onClick={() => onDeleteCharacterClick(character)}>
+                                                        <i class="fa-solid fa-trash"></i>
+                                                        <span>Delete</span>
                                                     </div>
                                                 )
                                             }

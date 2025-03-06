@@ -8,7 +8,12 @@ let allowedKeys = new Set();
 const memoize = (fn) => {
     const cache = new Map();
 
-    return (text, cacheKey) => {
+    return (text, cacheKey, clear) => {
+        if (clear) {
+            cache.clear();
+            return;
+        }
+
         const key = cacheKey;
 
         if (cache.has(key)) {
@@ -119,5 +124,6 @@ self.onmessage = function ({ data: { threshold, characters, method, fields } }) 
         return similarity(x, y);
     });
     const groups = clusters.similarGroups(threshold);
+    tokenizeIntoSentences('', '', true);
     self.postMessage({ type: 'result', data: groups });
 }

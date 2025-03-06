@@ -1,3 +1,5 @@
+/* global SillyTavern */
+/* global toastr */
 import './style.css';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -18,6 +20,12 @@ openButton.classList.add('menu_button', 'fa-solid', 'fa-chart-bar', 'faSmallFont
 openButton.dataset.i18n = '[title]Find similar characters';
 openButton.title = 'Find similar characters';
 openButton.addEventListener('click', () => {
+    const { characters } = SillyTavern.getContext();
+    const hasShallow = characters.some(c => c.shallow);
+    if (hasShallow) {
+        toastr.warning('All character definitions will be loaded before calculating the similarity.', 'Lazy loading is enabled');
+    }
+
     eventEmitter.emit(EVENT_NAMES.OPEN_PANEL);
 });
 const buttonContainer = document.getElementById('form_character_search_form');
