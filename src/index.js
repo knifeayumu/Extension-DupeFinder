@@ -28,9 +28,14 @@ openButton.addEventListener('click', () => {
 
     eventEmitter.emit(EVENT_NAMES.OPEN_PANEL);
 });
-const buttonContainer = document.getElementById('form_character_search_form');
-const searchBar = document.getElementById('character_search_bar');
-buttonContainer.insertBefore(openButton, searchBar);
+const buttonContainer = document.getElementById('rm_buttons_container');
+if (buttonContainer) {
+    buttonContainer.append(openButton);
+} else {
+    const searchForm = document.getElementById('form_character_search_form');
+    const searchBar = document.getElementById('character_search_bar');
+    searchForm.insertBefore(openButton, searchBar);
+}
 
 const root = ReactDOM.createRoot(rootElement);
 root.render(
